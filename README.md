@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # StockWise — Inventory and Stock Analysis System
 
 A Flask website for an academic inventory-management project. It uses MySQL for persistent data, Pandas and NumPy for analysis, and Matplotlib for a stock chart.
@@ -44,3 +45,6 @@ To publish this online, push the project to GitHub and deploy it on a Python web
 
 ## Academic scope
 Reorder recommendations use configurable reorder levels. The app does not place purchase orders automatically. `total stock-out` is a movement indicator, not necessarily verified sales.
+=======
+# inventory-stock-analysis
+>>>>>>> 004ab240a7c487904844a4a1c25f218cdbebce22
