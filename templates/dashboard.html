@@ -1,23 +1,22 @@
-{% extends "base.html" %}
-{% block title %}Dashboard | StockWise{% endblock %}
-{% block heading %}Dashboard overview{% endblock %}
-{% block content %}
-<section class="welcome"><div><p class="eyebrow light">INVENTORY AT A GLANCE</p><h2>Know your stock.<br>Make smarter decisions.</h2><p>Monitor product levels, stock movements, and inventory value from one place.</p><a class="btn btn-white" href="{{ url_for('products_page') }}">Manage products →</a></div><div class="welcome-art">▦</div></section>
-<section class="stats">
-  <div class="stat-card"><div class="stat-top"><span>Total products</span><span class="stat-icon blue">▣</span></div><strong>{{ product_count }}</strong><small>Products tracked</small></div>
-  <div class="stat-card"><div class="stat-top"><span>Units in stock</span><span class="stat-icon purple">▤</span></div><strong>{{ total_units }}</strong><small>Current available units</small></div>
-  <div class="stat-card"><div class="stat-top"><span>Inventory value</span><span class="stat-icon green">₹</span></div><strong>₹{{ "{:,.2f}".format(total_value) }}</strong><small>Current stock × unit cost</small></div>
-  <div class="stat-card"><div class="stat-top"><span>Low-stock alerts</span><span class="stat-icon orange">!</span></div><strong>{{ low_count }}</strong><small>At or below reorder level</small></div>
-</section>
-<div class="content-grid">
-  <section class="panel"><div class="panel-heading"><div><h3>Current inventory</h3><p>Latest product stock overview</p></div><a class="text-link" href="{{ url_for('products_page') }}">View all →</a></div>
-  <div class="table-wrap"><table><thead><tr><th>Product</th><th>SKU</th><th>Available</th><th>Stock status</th></tr></thead><tbody>
-  {% for p in products %}<tr><td><strong>{{ p.product_name }}</strong><small class="subcell">{{ p.category or 'Uncategorized' }}</small></td><td>{{ p.sku }}</td><td>{{ p.current_stock }}</td><td>{% if p.current_stock <= p.reorder_level %}<span class="pill danger">Low stock</span>{% else %}<span class="pill good">In stock</span>{% endif %}</td></tr>
-  {% else %}<tr><td colspan="4" class="empty">No products yet. Add your first product.</td></tr>{% endfor %}
-  </tbody></table></div></section>
-  <section class="panel"><div class="panel-heading"><div><h3>Reorder attention</h3><p>Items at or below threshold</p></div><span class="pill danger">{{ low_count }} items</span></div>
-  {% for p in low_stock %}<div class="alert-row"><div class="product-avatar">{{ p.product_name[:1]|upper }}</div><div class="alert-name"><strong>{{ p.product_name }}</strong><small>{{ p.current_stock }} units remaining</small></div><span class="pill danger">Reorder ≤ {{ p.reorder_level }}</span></div>
-  {% else %}<div class="empty padded">All products are above their reorder levels.</div>{% endfor %}
-  <a class="btn btn-outline full-btn" href="{{ url_for('transactions_page') }}">Record stock movement</a></section>
+{% extends "base.html" %}{% block title %}Dashboard{% endblock %}
+{% block body %}
+<h1>Inventory dashboard</h1>
+<p class="sub">Current stock is calculated from each product's opening balance plus every recorded movement.</p>
+<div class="stats">
+<div class="stat"><span>Products</span><strong>{{ n_products }}</strong></div>
+<div class="stat"><span>Units in stock</span><strong>{{ "{:,}".format(units) }}</strong></div>
+<div class="stat"><span>Estimated inventory value</span><strong>{{ value|money }}</strong></div>
+<div class="stat {{ 'alert' if low }}"><span>Below reorder level</span><strong>{{ low|length }}</strong></div>
+</div>
+<div class="charts">
+<div class="card"><img src="{{ url_for('chart_stock') }}" alt="Bar chart of current stock against reorder level for each product"></div>
+<div class="card"><img src="{{ url_for('chart_movement') }}" alt="Bar chart of units received and sent out per month"></div>
+</div>
+<h2>Needs reordering</h2>
+<div class="card">
+{% if low %}<table><tr><th>SKU</th><th>Product</th><th class="n">In stock</th><th class="n">Reorder level</th><th class="n">Suggested order</th></tr>
+{% for r in low %}<tr><td>{{ r.sku }}</td><td>{{ r.product_name }}</td><td class="n">{{ r.current_stock }}</td><td class="n">{{ r.reorder_level }}</td><td class="n">{{ r.suggested_order }}</td></tr>{% endfor %}</table>
+{% else %}All products are above their reorder level.{% endif %}
+<div class="links"><a class="btn ghost" href="{{ url_for('export_low') }}">Download low-stock CSV</a></div>
 </div>
 {% endblock %}

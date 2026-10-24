@@ -1,22 +1,20 @@
-{% extends "base.html" %}
-{% block title %}Stock movements | StockWise{% endblock %}
-{% block heading %}Stock movements{% endblock %}
-{% block content %}
-<div class="page-intro"><p>Record incoming stock and outgoing stock with a traceable transaction history.</p></div>
-<section class="panel form-panel"><div class="panel-heading"><div><h3>Record a movement</h3><p>Stock-out cannot exceed the available quantity.</p></div></div>
-{% if products %}
-<form method="post" class="form-grid">
-<label>Product *<select name="product_id" required>{% for p in products %}<option value="{{ p.product_id }}">{{ p.product_name }}</option>{% endfor %}</select></label>
-<label>Movement type *<select name="transaction_type" required><option value="IN">Stock in (+)</option><option value="OUT">Stock out (−)</option></select></label>
-<label>Quantity *<input name="quantity" type="number" min="1" required placeholder="e.g. 10"></label>
-<label>Supplier (for stock-in)<select name="supplier_id"><option value="">No supplier selected</option>{% for s in suppliers %}<option value="{{ s.supplier_id }}">{{ s.supplier_name }}</option>{% endfor %}</select></label>
-<div class="form-actions"><button class="btn" type="submit">Save transaction</button></div>
-</form>
-{% else %}<p class="empty padded">Add a product before recording transactions.</p>{% endif %}
-</section>
-<section class="panel"><div class="panel-heading"><div><h3>Recent transactions</h3><p>Latest 100 stock movements</p></div></div>
-<div class="table-wrap"><table><thead><tr><th>Transaction</th><th>Date</th><th>Product</th><th>Type</th><th>Quantity</th><th>Supplier</th></tr></thead><tbody>
-{% for t in transactions %}<tr><td>#{{ t.transaction_id }}</td><td>{{ t.transaction_date }}</td><td><strong>{{ t.product_name }}</strong></td><td>{% if t.transaction_type == 'IN' %}<span class="pill good">Stock in</span>{% else %}<span class="pill purple-pill">Stock out</span>{% endif %}</td><td>{{ t.quantity }}</td><td>{{ t.supplier_name or '—' }}</td></tr>
-{% else %}<tr><td colspan="6" class="empty">No transactions recorded yet.</td></tr>{% endfor %}
-</tbody></table></div></section>
+{% extends "base.html" %}{% block title %}Stock movements{% endblock %}
+{% block body %}
+<h1>Stock movements</h1>
+<p class="sub">Stock out and adjustments that would take a product below zero are rejected. Adjustments need a reason and stay in the history.</p>
+<div class="card"><form class="grid" method="post">
+<label>Product<select name="product_id" required>{% for p in products %}<option value="{{ p.product_id }}">{{ p.sku }} - {{ p.product_name }}</option>{% endfor %}</select></label>
+<label>Type<select name="transaction_type">{% for k, v in labels.items() %}<option value="{{ k }}">{{ v }}</option>{% endfor %}</select></label>
+<label>Quantity<input name="quantity" type="number" min="1" required></label>
+<label>Date<input name="transaction_date" type="date" value="{{ today }}" required></label>
+<label>Supplier (stock in)<select name="supplier_id"><option value="">None</option>{% for s in suppliers %}<option value="{{ s.supplier_id }}">{{ s.supplier_name }}</option>{% endfor %}</select></label>
+<label>Note / reason<input name="note" maxlength="255"></label>
+<button>Record movement</button></form></div>
+<form method="get" class="links"><label>Filter by product
+<select name="product_id" onchange="this.form.submit()"><option value="">All products</option>{% for p in products %}<option value="{{ p.product_id }}" {{ 'selected' if p.product_id==selected }}>{{ p.sku }} - {{ p.product_name }}</option>{% endfor %}</select></label>
+<a class="btn ghost" href="{{ url_for('export_txn') }}">Download history CSV</a></form>
+<div class="card"><table><tr><th>#</th><th>Date</th><th>Product</th><th>Type</th><th class="n">Qty</th><th>Supplier</th><th>Note</th></tr>
+{% for r in rows %}<tr><td>{{ r.transaction_id }}</td><td>{{ r.transaction_date }}</td><td>{{ r.sku }} {{ r.product_name }}</td>
+<td>{{ labels[r.transaction_type] }}</td><td class="n">{{ r.quantity }}</td><td>{{ r.supplier_name or '-' }}</td><td>{{ r.note or '' }}</td></tr>
+{% else %}<tr><td colspan="7">No movements recorded.</td></tr>{% endfor %}</table></div>
 {% endblock %}

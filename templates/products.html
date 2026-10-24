@@ -1,21 +1,23 @@
-{% extends "base.html" %}
-{% block title %}Products | StockWise{% endblock %}
-{% block heading %}Products{% endblock %}
-{% block content %}
-<div class="page-intro"><p>Maintain your product catalogue and monitor available stock.</p></div>
-<section class="panel form-panel"><div class="panel-heading"><div><h3>Add a product</h3><p>Fields marked * are required.</p></div></div>
-<form method="post" action="{{ url_for('add_product') }}" class="form-grid">
-  <label>SKU *<input name="sku" required maxlength="30" placeholder="e.g. P006"></label>
-  <label>Product name *<input name="product_name" required maxlength="100" placeholder="Product name"></label>
-  <label>Category<input name="category" maxlength="50" placeholder="Electronics"></label>
-  <label>Opening stock *<input name="opening_stock" type="number" min="0" required value="0"></label>
-  <label>Reorder level *<input name="reorder_level" type="number" min="0" required value="10"></label>
-  <label>Unit cost (₹) *<input name="unit_cost" type="number" min="0" step="0.01" required value="0"></label>
-  <div class="form-actions"><button class="btn" type="submit">＋ Add product</button></div>
-</form></section>
-<section class="panel"><div class="panel-heading"><div><h3>Product inventory</h3><p>{{ products|length }} products listed</p></div><a class="btn btn-outline" href="{{ url_for('report_csv') }}">Export CSV ↓</a></div>
-<div class="table-wrap"><table><thead><tr><th>Product</th><th>SKU</th><th>Category</th><th>Available</th><th>Reorder level</th><th>Unit cost</th><th>Stock value</th></tr></thead><tbody>
-{% for p in products %}<tr><td><strong>{{ p.product_name }}</strong></td><td>{{ p.sku }}</td><td>{{ p.category or '—' }}</td><td><strong>{{ p.current_stock }}</strong></td><td>{{ p.reorder_level }}</td><td>₹{{ "{:,.2f}".format(p.unit_cost) }}</td><td>₹{{ "{:,.2f}".format(p.current_stock * p.unit_cost) }}</td></tr>
-{% else %}<tr><td colspan="7" class="empty">No products found.</td></tr>{% endfor %}
-</tbody></table></div></section>
+{% extends "base.html" %}{% block title %}Products{% endblock %}
+{% block body %}
+<h1>Products</h1>
+<p class="sub">Opening balance is fixed once a product is created, so history always reconciles. Reorder level and unit cost can be changed.</p>
+<div class="card"><form class="grid" method="post">
+<label>SKU<input name="sku" required maxlength="30"></label>
+<label>Product name<input name="product_name" required maxlength="120"></label>
+<label>Category<input name="category" required maxlength="60"></label>
+<label>Opening balance<input name="opening_balance" type="number" min="0" value="0" required></label>
+<label>Reorder level<input name="reorder_level" type="number" min="0" value="10" required></label>
+<label>Unit cost (&#8377;)<input name="unit_cost" type="number" min="0" step="0.01" required></label>
+<button>Add product</button></form></div>
+<div class="card"><table>
+<tr><th>SKU</th><th>Product</th><th>Category</th><th class="n">Opening</th><th class="n">In stock</th><th>Status</th><th>Reorder level</th><th>Unit cost</th><th></th></tr>
+{% for r in rows %}<tr><td>{{ r.sku }}</td><td>{{ r.product_name }}</td><td>{{ r.category }}</td>
+<td class="n">{{ r.opening_balance }}</td><td class="n">{{ r.current_stock }}</td>
+<td><span class="tag {{ r.status.split()[0] }}">{{ r.status }}</span></td>
+<td><input form="f{{ r.product_id }}" class="sm" type="number" min="0" name="reorder_level" value="{{ r.reorder_level }}" aria-label="Reorder level for {{ r.product_name }}"></td>
+<td><input form="f{{ r.product_id }}" class="sm" type="number" min="0" step="0.01" name="unit_cost" value="{{ r.unit_cost }}" aria-label="Unit cost for {{ r.product_name }}"></td>
+<td><form id="f{{ r.product_id }}" method="post" action="{{ url_for('product_settings', pid=r.product_id) }}"><button class="ghost">Save</button></form></td></tr>
+{% else %}<tr><td colspan="9">No products yet. Add one above.</td></tr>{% endfor %}
+</table></div>
 {% endblock %}

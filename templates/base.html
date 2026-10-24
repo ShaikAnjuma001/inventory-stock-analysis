@@ -1,30 +1,17 @@
 <!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>{% block title %}StockWise Inventory{% endblock %}</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-</head>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>{% block title %}StockWise{% endblock %} - StockWise</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}"></head>
 <body>
-  <aside class="sidebar">
-    <a class="brand" href="{{ url_for('dashboard') }}"><span class="brand-icon">▦</span> StockWise</a>
-    <div class="side-label">WORKSPACE</div>
-    <a href="{{ url_for('dashboard') }}" class="nav-link">▥ &nbsp; Dashboard</a>
-    <a href="{{ url_for('products_page') }}" class="nav-link">▣ &nbsp; Products</a>
-    <a href="{{ url_for('suppliers_page') }}" class="nav-link">♧ &nbsp; Suppliers</a>
-    <a href="{{ url_for('transactions_page') }}" class="nav-link">⇄ &nbsp; Stock movements</a>
-    <a href="{{ url_for('analytics') }}" class="nav-link">▥ &nbsp; Analytics</a>
-    <a href="{{ url_for('report_csv') }}" class="nav-link">⇩ &nbsp; Download CSV</a>
-    <div class="sidebar-bottom">Inventory &amp; Stock Analysis<br><small>Academic project</small></div>
-  </aside>
-  <main class="main">
-    <header class="topbar"><div><span class="eyebrow">INVENTORY MANAGEMENT</span><h1>{% block heading %}Dashboard{% endblock %}</h1></div><span class="status"><span></span> System workspace</span></header>
-    {% with messages = get_flashed_messages(with_categories=true) %}
-      {% if messages %}<div class="messages">{% for category, message in messages %}<div class="flash {{ category }}">{{ message }}</div>{% endfor %}</div>{% endif %}
-    {% endwith %}
-    {% block content %}{% endblock %}
-    <footer>StockWise · Inventory and Stock Analysis System</footer>
-  </main>
-</body>
-</html>
+<header><b>StockWise</b>
+<nav>{% set ep = request.endpoint %}
+<a href="{{ url_for('dashboard') }}" class="{{ 'on' if ep=='dashboard' }}">Dashboard</a>
+<a href="{{ url_for('products') }}" class="{{ 'on' if ep=='products' }}">Products</a>
+<a href="{{ url_for('suppliers') }}" class="{{ 'on' if ep=='suppliers' }}">Suppliers</a>
+<a href="{{ url_for('transactions') }}" class="{{ 'on' if ep=='transactions' }}">Stock movements</a>
+<a href="{{ url_for('reports') }}" class="{{ 'on' if ep=='reports' }}">Reports</a></nav></header>
+<main>
+{% with m = get_flashed_messages(with_categories=true) %}{% for c, t in m %}<div class="msg {{ c }}" role="status">{{ t }}</div>{% endfor %}{% endwith %}
+{% block body %}{% endblock %}
+</main></body></html>
