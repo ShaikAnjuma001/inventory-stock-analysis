@@ -3,8 +3,11 @@
 Flask website for tracking stock movements, flagging low-stock items, and analysing product movement and inventory value.
 Stack: Flask, MySQL (PyMySQL), Pandas, NumPy, Matplotlib.
 
-Live demo: _add your PythonAnywhere link here_
+## Live Website
 
+**Open StockWise:** https://inventory-stock-analysis-q2az.onrender.com
+
+**Source Code:** https://github.com/ShaikAnjuma001/inventory-stock-analysis
 ## Features
 - Products (SKU, category, opening balance, reorder level, unit cost) and suppliers
 - Stock in, stock out, and logged adjustments (adjustments require a reason)
