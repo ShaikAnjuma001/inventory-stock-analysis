@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}Analytics | StockWise{% endblock %}
+{% block heading %}Inventory analytics{% endblock %}
+{% block content %}
+<div class="page-intro"><p>Use inventory metrics to understand stock levels, product movement, and current stock value.</p></div>
+<div class="stats compact-stats"><div class="stat-card"><div class="stat-top"><span>Total stock value</span><span class="stat-icon green">₹</span></div><strong>₹{{ "{:,.2f}".format(total_value) }}</strong><small>Available stock × unit cost</small></div><div class="stat-card"><div class="stat-top"><span>Low-stock products</span><span class="stat-icon orange">!</span></div><strong>{{ low_stock|length }}</strong><small>At or below reorder level</small></div></div>
+<section class="panel"><div class="panel-heading"><div><h3>Stock level chart</h3><p>Current quantity by product</p></div></div>
+{% if chart %}<img class="chart-image" src="data:image/png;base64,{{ chart }}" alt="Stock chart">{% else %}<p class="empty padded">Add products to see analytics.</p>{% endif %}
+</section>
+<section class="panel"><div class="panel-heading"><div><h3>Low-stock report</h3><p>Review products that may need replenishment.</p></div><a class="btn btn-outline" href="{{ url_for('report_csv') }}">Download report ↓</a></div>
+<div class="table-wrap"><table><thead><tr><th>Product</th><th>Current stock</th><th>Reorder level</th><th>Stock value</th></tr></thead><tbody>
+{% for p in low_stock %}<tr><td><strong>{{ p.product_name }}</strong></td><td>{{ p.current_stock }}</td><td>{{ p.reorder_level }}</td><td>₹{{ "{:,.2f}".format(p.stock_value) }}</td></tr>{% else %}<tr><td colspan="4" class="empty">No low-stock products.</td></tr>{% endfor %}
+</tbody></table></div></section>
+<section class="panel"><div class="panel-heading"><div><h3>Product movement summary</h3><p>Stock-out quantity is used as a movement indicator.</p></div></div>
+<div class="table-wrap"><table><thead><tr><th>Product</th><th>Stock in</th><th>Stock out</th><th>Current stock</th></tr></thead><tbody>
+{% for p in products %}<tr><td><strong>{{ p.product_name }}</strong></td><td>{{ p.total_in if p.total_in is defined else '—' }}</td><td>{{ p.total_out if p.total_out is defined else '—' }}</td><td>{{ p.current_stock }}</td></tr>{% else %}<tr><td colspan="4" class="empty">No data.</td></tr>{% endfor %}
+</tbody></table></div></section>
+{% endblock %}

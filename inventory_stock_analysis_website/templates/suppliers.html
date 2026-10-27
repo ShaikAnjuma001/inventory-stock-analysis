@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}Suppliers | StockWise{% endblock %}
+{% block heading %}Suppliers{% endblock %}
+{% block content %}
+<div class="page-intro"><p>Keep a simple directory of your product suppliers.</p></div>
+<section class="panel form-panel"><div class="panel-heading"><div><h3>Add a supplier</h3><p>Supplier name is required.</p></div></div>
+<form method="post" class="form-grid two-col">
+<label>Supplier name *<input name="supplier_name" required placeholder="Supplier name"></label>
+<label>Phone number<input name="phone" placeholder="Phone number"></label>
+<div class="form-actions"><button class="btn" type="submit">＋ Add supplier</button></div>
+</form></section>
+<section class="panel"><div class="panel-heading"><div><h3>Supplier directory</h3><p>{{ suppliers|length }} suppliers</p></div></div>
+<div class="table-wrap"><table><thead><tr><th>ID</th><th>Supplier</th><th>Phone</th></tr></thead><tbody>
+{% for s in suppliers %}<tr><td>{{ s.supplier_id }}</td><td><strong>{{ s.supplier_name }}</strong></td><td>{{ s.phone or '—' }}</td></tr>{% else %}<tr><td colspan="3" class="empty">No suppliers yet.</td></tr>{% endfor %}
+</tbody></table></div></section>
+{% endblock %}
