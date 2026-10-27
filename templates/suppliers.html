@@ -1,0 +1,12 @@
+{% extends "base.html" %}{% block title %}Suppliers{% endblock %}
+{% block body %}
+<h1>Suppliers</h1>
+<p class="sub">Pick a supplier when recording stock-in movements.</p>
+<div class="card"><form class="grid" method="post">
+<label>Supplier name<input name="supplier_name" required maxlength="100"></label>
+<label>Contact email<input name="contact_email" type="email" maxlength="120"></label>
+<button>Add supplier</button></form></div>
+<div class="card"><table><tr><th>Supplier</th><th>Contact email</th></tr>
+{% for r in rows %}<tr><td>{{ r.supplier_name }}</td><td>{{ r.contact_email or '-' }}</td></tr>
+{% else %}<tr><td colspan="2">No suppliers yet.</td></tr>{% endfor %}</table></div>
+{% endblock %}

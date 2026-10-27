@@ -1,0 +1,20 @@
+{% extends "base.html" %}{% block title %}Stock movements{% endblock %}
+{% block body %}
+<h1>Stock movements</h1>
+<p class="sub">Stock out and adjustments that would take a product below zero are rejected. Adjustments need a reason and stay in the history.</p>
+<div class="card"><form class="grid" method="post">
+<label>Product<select name="product_id" required>{% for p in products %}<option value="{{ p.product_id }}">{{ p.sku }} - {{ p.product_name }}</option>{% endfor %}</select></label>
+<label>Type<select name="transaction_type">{% for k, v in labels.items() %}<option value="{{ k }}">{{ v }}</option>{% endfor %}</select></label>
+<label>Quantity<input name="quantity" type="number" min="1" required></label>
+<label>Date<input name="transaction_date" type="date" value="{{ today }}" required></label>
+<label>Supplier (stock in)<select name="supplier_id"><option value="">None</option>{% for s in suppliers %}<option value="{{ s.supplier_id }}">{{ s.supplier_name }}</option>{% endfor %}</select></label>
+<label>Note / reason<input name="note" maxlength="255"></label>
+<button>Record movement</button></form></div>
+<form method="get" class="links"><label>Filter by product
+<select name="product_id" onchange="this.form.submit()"><option value="">All products</option>{% for p in products %}<option value="{{ p.product_id }}" {{ 'selected' if p.product_id==selected }}>{{ p.sku }} - {{ p.product_name }}</option>{% endfor %}</select></label>
+<a class="btn ghost" href="{{ url_for('export_txn') }}">Download history CSV</a></form>
+<div class="card"><table><tr><th>#</th><th>Date</th><th>Product</th><th>Type</th><th class="n">Qty</th><th>Supplier</th><th>Note</th></tr>
+{% for r in rows %}<tr><td>{{ r.transaction_id }}</td><td>{{ r.transaction_date }}</td><td>{{ r.sku }} {{ r.product_name }}</td>
+<td>{{ labels[r.transaction_type] }}</td><td class="n">{{ r.quantity }}</td><td>{{ r.supplier_name or '-' }}</td><td>{{ r.note or '' }}</td></tr>
+{% else %}<tr><td colspan="7">No movements recorded.</td></tr>{% endfor %}</table></div>
+{% endblock %}

@@ -1,0 +1,25 @@
+{% extends "base.html" %}{% block title %}Reports{% endblock %}
+{% block body %}
+<h1>Reports</h1>
+<p class="sub">Estimated inventory value: <b>{{ total|money }}</b> (units in stock x unit cost).</p>
+<h2>Current stock report</h2>
+<div class="card"><table><tr><th>SKU</th><th>Product</th><th>Category</th><th class="n">In stock</th><th class="n">Reorder level</th><th class="n">Unit cost</th><th class="n">Value</th><th>Status</th></tr>
+{% for r in stock %}<tr><td>{{ r.sku }}</td><td>{{ r.product_name }}</td><td>{{ r.category }}</td><td class="n">{{ r.current_stock }}</td><td class="n">{{ r.reorder_level }}</td><td class="n">{{ r.unit_cost|money }}</td><td class="n">{{ r.stock_value|money }}</td><td><span class="tag {{ r.status.split()[0] }}">{{ r.status }}</span></td></tr>{% endfor %}</table>
+<div class="links"><a class="btn ghost" href="{{ url_for('export_stock') }}">Download stock CSV</a></div></div>
+<h2>Low-stock list</h2>
+<div class="card">{% if low %}<table><tr><th>SKU</th><th>Product</th><th class="n">In stock</th><th class="n">Reorder level</th><th class="n">Suggested order</th></tr>
+{% for r in low %}<tr><td>{{ r.sku }}</td><td>{{ r.product_name }}</td><td class="n">{{ r.current_stock }}</td><td class="n">{{ r.reorder_level }}</td><td class="n">{{ r.suggested_order }}</td></tr>{% endfor %}</table>
+<p class="sub">Suggested order restores stock to twice the reorder level. It is a recommendation only; nothing is purchased automatically.</p>
+{% else %}No product is below its reorder level.{% endif %}</div>
+<h2>Fast-moving products (units out, last 30 days of activity)</h2>
+<div class="card"><table><tr><th>SKU</th><th>Product</th><th class="n">Units out</th><th class="n">Share of all outflow</th><th class="n">In stock</th><th class="n">Days of stock left</th></tr>
+{% for r in moves %}<tr><td>{{ r.sku }}</td><td>{{ r.product_name }}</td><td class="n">{{ r.units_out }}</td><td class="n">{{ r.share_pct }}%</td><td class="n">{{ r.current_stock }}</td><td class="n">{{ r.days_left }}</td></tr>{% endfor %}</table></div>
+<h2>Value by category</h2>
+<div class="card"><table><tr><th>Category</th><th class="n">Units</th><th class="n">Value</th></tr>
+{% for r in cats %}<tr><td>{{ r.category }}</td><td class="n">{{ r.units }}</td><td class="n">{{ r.value|money }}</td></tr>{% endfor %}</table></div>
+<h2>Reconciliation check</h2>
+<div class="card"><table><tr><th>SKU</th><th>Product</th><th class="n">Opening</th><th class="n">Total in</th><th class="n">Total out</th><th class="n">Rebuilt from history</th><th class="n">Reported stock</th><th class="n">Lowest balance</th><th>Result</th></tr>
+{% for r in rec %}<tr><td>{{ r.sku }}</td><td>{{ r.product_name }}</td><td class="n">{{ r.opening }}</td><td class="n">{{ r.in_qty }}</td><td class="n">{{ r.out_qty }}</td><td class="n">{{ r.rebuilt }}</td><td class="n">{{ r.reported }}</td><td class="n">{{ r.lowest }}</td>
+<td><span class="tag {{ 'good' if r.ok else 'bad' }}">{{ 'Matches' if r.ok else 'Mismatch' }}</span></td></tr>{% endfor %}</table>
+<p class="sub">Each balance is rebuilt row by row from the transaction history and compared with the stock figure above. It also confirms the balance never went below zero.</p></div>
+{% endblock %}

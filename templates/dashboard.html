@@ -1,0 +1,22 @@
+{% extends "base.html" %}{% block title %}Dashboard{% endblock %}
+{% block body %}
+<h1>Inventory dashboard</h1>
+<p class="sub">Current stock is calculated from each product's opening balance plus every recorded movement.</p>
+<div class="stats">
+<div class="stat"><span>Products</span><strong>{{ n_products }}</strong></div>
+<div class="stat"><span>Units in stock</span><strong>{{ "{:,}".format(units) }}</strong></div>
+<div class="stat"><span>Estimated inventory value</span><strong>{{ value|money }}</strong></div>
+<div class="stat {{ 'alert' if low }}"><span>Below reorder level</span><strong>{{ low|length }}</strong></div>
+</div>
+<div class="charts">
+<div class="card"><img src="{{ url_for('chart_stock') }}" alt="Bar chart of current stock against reorder level for each product"></div>
+<div class="card"><img src="{{ url_for('chart_movement') }}" alt="Bar chart of units received and sent out per month"></div>
+</div>
+<h2>Needs reordering</h2>
+<div class="card">
+{% if low %}<table><tr><th>SKU</th><th>Product</th><th class="n">In stock</th><th class="n">Reorder level</th><th class="n">Suggested order</th></tr>
+{% for r in low %}<tr><td>{{ r.sku }}</td><td>{{ r.product_name }}</td><td class="n">{{ r.current_stock }}</td><td class="n">{{ r.reorder_level }}</td><td class="n">{{ r.suggested_order }}</td></tr>{% endfor %}</table>
+{% else %}All products are above their reorder level.{% endif %}
+<div class="links"><a class="btn ghost" href="{{ url_for('export_low') }}">Download low-stock CSV</a></div>
+</div>
+{% endblock %}

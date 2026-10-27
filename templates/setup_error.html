@@ -1,0 +1,6 @@
+{% extends "base.html" %}
+{% block title %}Database setup | StockWise{% endblock %}
+{% block heading %}Database connection needed{% endblock %}
+{% block content %}
+<section class="panel"><h3>Cannot connect to the MySQL database</h3><p>Check that MySQL Server is running, the database exists, and the DB settings in your environment are correct.</p><p class="error-detail">{{ error }}</p><p>Open <code>schema.sql</code> in MySQL Workbench and execute it, then check the database credentials in your setup.</p></section>
+{% endblock %}
