@@ -19,11 +19,11 @@ app.secret_key = os.getenv("SECRET_KEY", "change-this-before-deploying")
 
 def get_connection():
     cfg = dict(
-        host=os.getenv("DB_HOST", "localhost"),
-        port=int(os.getenv("DB_PORT", "3306")),
-        user=os.getenv("DB_USER", "root"),
+        host=os.getenv("DB_HOST", "stockwise-db-shaikanjuma001-2ac8.d.aivencloud.com"),
+        port=int(os.getenv("DB_PORT", "26008")),
+        user=os.getenv("DB_USER", "avnadmin"),
         password=os.getenv("DB_PASSWORD", ""),
-        database=os.getenv("DB_NAME", "inventory_db"),
+        database=os.getenv("DB_NAME", "defaultdb"),
         connection_timeout=15,
     )
     # Cloud MySQL providers (e.g. Aiven) require SSL.
