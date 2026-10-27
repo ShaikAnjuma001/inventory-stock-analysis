@@ -5,7 +5,7 @@ Stack: Flask, MySQL (PyMySQL), Pandas, NumPy, Matplotlib.
 
 ## Live Website
 
-**Open StockWise:** https://inventory-stock-analysis-q2az.onrender.com
+[**Open StockWise — Inventory and Stock Analysis System**](https://inventory-stock-analysis-q2az.onrender.com)
 
 **Source Code:** https://github.com/ShaikAnjuma001/inventory-stock-analysis
 ## Features
