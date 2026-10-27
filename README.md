@@ -36,7 +36,7 @@ $env:DB_HOST="localhost"; $env:DB_PORT="3306"; $env:DB_USER="root"
 $env:DB_PASSWORD="YOUR_MYSQL_PASSWORD"; $env:DB_NAME="inventory_db"
 python app.py
 ```
-Open http://127.0.0.1:5000
+**Live Website:** https://inventory-stock-analysis-q2az.onrender.com
 
 ## Deploy on PythonAnywhere (free)
 1. Bash console: `git clone <your repo url>`, then `mkvirtualenv myenv --python=/usr/bin/python3.10` and `pip install -r requirements.txt`.
